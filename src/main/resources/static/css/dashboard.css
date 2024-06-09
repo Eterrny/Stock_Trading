@@ -1,0 +1,67 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 100%;
+    /*margin: 50px auto;*/
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    color: #333;
+    margin: 0;
+}
+
+.user-info {
+    text-align: center;
+}
+
+.user-details {
+    border: 1px solid #ddd; /* Светлая рамка */
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9; /* Очень светлый серый фон */
+    margin-top: 20px;
+}
+
+.user-details p {
+    margin: 10px 0;
+}
+
+.user-details strong {
+    font-weight: bold;
+}
+
+.logout-btn {
+    background-color: #009cff;
+    color: #fff;
+    border: none;
+    margin-top: 10px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    position: absolute;
+    top: 1%;
+    right: 3%;
+}
+
+.logout-btn:hover {
+    background-color: #0054a8;
+}
