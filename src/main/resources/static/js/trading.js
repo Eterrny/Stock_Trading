@@ -65,7 +65,9 @@ $(document).ready(function () {
 
     $('.buy-btn').click(function () {
         const company = $(this).data('company');
-        const availableQuantity = $(this).data('quantity');
+        const row = $('#stocksTableBody').find('tr:contains(' + company + ')');
+        const quantityCell = row.find('td').eq(3);
+        const availableQuantity = parseInt(quantityCell.text());
         $('#buyModal').show();
         $('#overlay').show();
         $('#companyName').text(company);
@@ -95,27 +97,12 @@ $(document).ready(function () {
     });
 
     $('#buyForm').submit(function (event) {
-        // event.preventDefault();
-        // $('#buyModal').hide();
-        // $('#overlay').hide();
-        // alert('Stock purchased successfully!');
         event.preventDefault();
         const quantity = $('#quantityInput').val();
         const buyPrice = parseFloat($('#stocksTableBody').find('td:contains(' + $('#companyName').text() + ')').next().text());
         const totalCost = buyPrice * quantity * (1 + tariffs[userTariff]);
 
         if (userBalance >= totalCost) {
-            // $.post('/buy-stock', { company: $('#companyName').text(), quantity: quantity }, function (response) {
-            //     if (response.success) {
-            //         alert('Stock purchased successfully!');
-            //         userBalance -= totalCost;
-            //         $('#userBalance').text(userBalance.toFixed(2));
-            //     } else {
-            //         alert('Error: ' + response.message);
-            //     }
-            //     $('#buyModal').hide();
-            //     $('#overlay').hide();
-            // });
             $.ajax({
                 url: '/buy-stock',
                 type: 'POST',
@@ -129,7 +116,8 @@ $(document).ready(function () {
                 success: function (response) {
                     showSuccessMessage(response);
                     userBalance -= totalCost;
-                    $('#userBalance').text(userBalance.toFixed(1));
+                    $('#userBalance').text(userBalance.toFixed(2));
+                    updateTable($('#companyName').text(), quantity)
                     $('#buyModal').hide();
                     $('#overlay').hide();
                 },
@@ -147,6 +135,18 @@ $(document).ready(function () {
         const commissionRate = tariffs[userTariff];
         const totalCost = buyPrice * quantity * (1 + commissionRate);
         $('#totalCost').text(totalCost.toFixed(2));
+    }
+
+    function updateTable(companyName, quantitySold) {
+        const row = $('#stocksTableBody').find('tr:contains(' + companyName + ')');
+        const quantityCell = row.find('td').eq(3);
+        let availableQuantity = parseInt(quantityCell.text());
+        availableQuantity -= quantitySold;
+        if (availableQuantity <= 0) {
+            row.remove();
+        } else {
+            quantityCell.text(availableQuantity);
+        }
     }
 
     function showError(message) {

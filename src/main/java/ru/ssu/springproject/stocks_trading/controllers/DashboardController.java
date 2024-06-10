@@ -2,15 +2,19 @@ package ru.ssu.springproject.stocks_trading.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.ssu.springproject.stocks_trading.exceptions.InsufficientBalanceException;
+import ru.ssu.springproject.stocks_trading.models.UserStock;
 import ru.ssu.springproject.stocks_trading.repositories.UserRepository;
+import ru.ssu.springproject.stocks_trading.repositories.UserStockRepository;
+import ru.ssu.springproject.stocks_trading.services.DashboardService;
+import ru.ssu.springproject.stocks_trading.services.StockService;
 import ru.ssu.springproject.stocks_trading.services.UserService;
 import ru.ssu.springproject.stocks_trading.models.User;
 
@@ -20,6 +24,9 @@ import ru.ssu.springproject.stocks_trading.models.User;
 @RequestMapping("/dashboard")
 public class DashboardController {
     private final UserService userService;
+    private final DashboardService dashboardService;
+    private final UserStockRepository userStockRepository;
+    private final UserRepository userRepository;
 
     @GetMapping
     public String showUserDashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
@@ -28,13 +35,31 @@ public class DashboardController {
         log.info("\n{}", user.getUsername());
         log.info("\n{}", user.getTariff());
         log.info("\n{}", user.getBalance());
-//        model.addAttribute("username", user.getUsername());
-//        model.addAttribute("balance", user.getBalance());
-//        model.addAttribute("tariff", user.getTariff());
+        log.info("\n{}", user.getStocks());
+
+
         model.addAttribute("user", user);
         model.addAttribute("name", user.getUsername());
-        model.addAttribute("user_stocks", user.getStocks());
+        model.addAttribute("stocks", user.getStocks());
         return "dashboard";
+    }
+
+    @PostMapping("/sell-stock")
+    @ResponseBody
+    public ResponseEntity<?> sellStock(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String stockName, @RequestParam int quantity) {
+        log.info("Received stockName: {}", stockName);
+        log.info("Received quantity: {}", quantity);
+        try {
+            log.info("\nТУТУТУТ{}", userDetails.getUsername());
+            User user = userRepository.findByUsername(userDetails.getUsername());
+            UserStock stock = userStockRepository.findByUserAndStockName(user, stockName);
+            dashboardService.sellProduct(user, stock, quantity);
+            return ResponseEntity.ok().body("Stock sold successfully!");
+        } catch (InsufficientBalanceException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing the request.");
+        }
     }
 }
 

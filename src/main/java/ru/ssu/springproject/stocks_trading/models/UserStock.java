@@ -10,9 +10,8 @@ public class UserStock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn
-    private Stock stock;
+    @Column(name = "stock_name")
+    private String stockName;
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
     @Column(name = "average_price", nullable = false)
@@ -21,4 +20,3 @@ public class UserStock {
     @JoinColumn
     private User user;
 }
-

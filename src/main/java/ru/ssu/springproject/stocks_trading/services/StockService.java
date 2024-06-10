@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.ssu.springproject.stocks_trading.exceptions.InsufficientBalanceException;
+import ru.ssu.springproject.stocks_trading.exceptions.NotEnoughQuantityException;
 import ru.ssu.springproject.stocks_trading.models.Stock;
 import ru.ssu.springproject.stocks_trading.models.User;
 import ru.ssu.springproject.stocks_trading.models.UserStock;
@@ -12,7 +14,6 @@ import ru.ssu.springproject.stocks_trading.repositories.StockRepository;
 import ru.ssu.springproject.stocks_trading.repositories.UserRepository;
 import ru.ssu.springproject.stocks_trading.repositories.UserStockRepository;
 
-import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -24,16 +25,9 @@ public class StockService {
     private final UserRepository userRepository;
     private final UserStockRepository userStockRepository;
 
-    public List<Stock> findByCompanyName(String companyName) {
-        if (companyName == null) {
-            return stockRepository.findAll();
-        }
-        return stockRepository.findByCompanyName(companyName);
-    }
-
     public void buyProduct(UserDetails userDetails, Stock stock, int quantity) {
         if (stock.getAvailableQuantity() < quantity) {
-            throw new NotEnoughQuantityExceprion("Not enough stock to buy");
+            throw new NotEnoughQuantityException("Not enough stock to buy");
         }
 
         User user = userRepository.findByUsername(userDetails.getUsername());
@@ -50,16 +44,16 @@ public class StockService {
             stock.setAvailableQuantity(stock.getAvailableQuantity() - quantity);
             stockRepository.save(stock);
 
-            UserStock userStock = userStockRepository.findByUserAndStock(user, stock);
+            UserStock userStock = userStockRepository.findByUserAndStockName(user, stock.getCompanyName());
             if (userStock == null) {
                 userStock = new UserStock();
                 userStock.setUser(user);
-                userStock.setStock(stock);
+                userStock.setStockName(stock.getCompanyName());
                 userStock.setQuantity(quantity);
                 userStock.setAveragePrice(stock.getSellPrice());
             } else {
                 int newQuantity = userStock.getQuantity() + quantity;
-                double newAveragePrice = (userStock.getAveragePrice() * userStock.getQuantity() + stock.getBuyPrice() * quantity) / newQuantity;
+                double newAveragePrice = (stock.getSellPrice());
                 userStock.setQuantity(newQuantity);
                 userStock.setAveragePrice(newAveragePrice);
             }
@@ -77,17 +71,5 @@ public class StockService {
             case "novice" -> 0.03;
             default -> 0.05;
         };
-    }
-
-    public class InsufficientBalanceException extends RuntimeException {
-        public InsufficientBalanceException(String message) {
-            super(message);
-        }
-    }
-
-    public class NotEnoughQuantityExceprion extends RuntimeException {
-        public NotEnoughQuantityExceprion(String message) {
-            super(message);
-        }
     }
 }

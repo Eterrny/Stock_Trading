@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="/css/dashboard.css">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
 <div class="container">
@@ -18,10 +20,111 @@
         </form>
         <div class="user-details">
             <h2>Welcome, <span th:text="${user.username}"></span></h2>
-            <p><strong>Balance:</strong> <span th:text="${user.balance}"></span></p>
+            <p><strong>Balance:</strong> <span id="userBalance" th:text="${user.balance}"></span></p>
             <p><strong>Tariff:</strong> <span th:text="${user.tariff}"></span></p>
+        </div>
+        <p style="right: 20px">Your Assets</p>
+        <div class="stocks-details">
+            <table class="table table_bordered">
+                <thead>
+                <tr class="text-title_caps">
+                    <th scope="col" class="tableHeader" data-field-sort="companyName"
+                        onclick="sortTable('companyName')">
+                        <a href="javascript:void(0);" class="text-link--reset">
+                            <div style="width: 100%; display: flex;">
+                                <span class="cell-wrap" title="Company Name">
+                                    Company Name
+                                </span>
+                                <span class="containerSpan">
+                                    <span class="companyNameArrow arrowSpan" data-sort-direction="asc">&#9650;</span>
+                                    <span class="companyNameArrow arrowSpan" data-sort-direction="desc">&#9660;</span>
+                                </span>
+                            </div>
+                        </a>
+                    </th>
+                    <th scope="col" class="tableHeader" data-field-sort="sellPrice" onclick="sortTable('sellPrice')">
+                        <a href="javascript:void(0);" class="text-link--reset">
+                            <div style="width: 100%; display: flex;">
+                                <span class="cell-wrap" title="Sell Price">
+                                    Sell Price
+                                </span>
+                                <span class="containerSpan">
+                                    <span class="sellPriceArrow arrowSpan" data-sort-direction="asc">&#9650;</span>
+                                    <span class="sellPriceArrow arrowSpan" data-sort-direction="desc">&#9660;</span>
+                                </span>
+                            </div>
+                        </a>
+                    </th>
+                    <th scope="col" class="tableHeader" data-field-sort="availableQuantity"
+                        onclick="sortTable('availableQuantity')">
+                        <a href="javascript:void(0);" class="text-link--reset">
+                            <div style="width: 100%; display: flex;">
+                                <span class="cell-wrap" title="Quantity">
+                                    Quantity
+                                </span>
+                                <span class="containerSpan">
+                                    <span class="availableQuantityArrow arrowSpan"
+                                          data-sort-direction="asc">&#9650;</span>
+                                    <span class="availableQuantityArrow arrowSpan"
+                                          data-sort-direction="desc">&#9660;</span>
+                                </span>
+                            </div>
+                        </a>
+                    </th>
+                    <th scope="col" class="tableHeader">
+                        <div class="cell-wrap">
+                            Action
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="stocksTableBody">
+                <tr th:each="stock : ${stocks}">
+                    <td class="truncate cell-wrap" th:title="${stock.stockName}" th:text="${stock.stockName}"></td>
+                    <td class="truncate cell-wrap" th:text="${stock.averagePrice}"
+                        th:title="${stock.averagePrice}"></td>
+                    <td class="truncate cell-wrap" th:text="${stock.quantity}" th:title="${stock.quantity}"></td>
+                    <td>
+                        <button type="button" title="Sell Stock" class="sell-btn"
+                                th:data-company="${stock.stockName}" th:data-quantity="${stock.quantity}">
+                            Sell
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+<div id="overlay"></div>
+<div id="sellModal">
+    <div class="modal-content">
+        <span id="closeModal">&times;</span>
+        <h2>Sell Stock</h2>
+        <form id="sellForm">
+            <p>Stock: <span id="stockName"></span></p>
+            <p>
+                <label for="quantityInput">Quantity:</label>
+                <input type="number" id="quantityInput" name="quantity" min="1" required>
+                <a href="javascript:void(0)" title="Set Max Quantity" class="max-set"
+                   style="text-underline-mode: 1">max</a>
+            </p>
+            <p><strong>Total Cost:</strong> <span id="totalCost"></span></p>
+            <button type="submit">Sell</button>
+        </form>
+    </div>
+</div>
+<div class="notification-container">
+    <div id="errorAlert" class="notification error">
+    </div>
+</div>
+<div class="notification-success">
+    <div id="success" class="notification success">
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!--<script src="/js/trading.js"></script>-->
+<script src="/js/dashboard.js"></script>
 </body>
 </html>

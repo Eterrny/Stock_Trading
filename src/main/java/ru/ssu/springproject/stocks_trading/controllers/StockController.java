@@ -9,14 +9,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ru.ssu.springproject.stocks_trading.exceptions.InsufficientBalanceException;
 import ru.ssu.springproject.stocks_trading.models.Stock;
 import ru.ssu.springproject.stocks_trading.models.User;
 import ru.ssu.springproject.stocks_trading.repositories.StockRepository;
 import ru.ssu.springproject.stocks_trading.services.StockService;
 import ru.ssu.springproject.stocks_trading.services.UserService;
 
-import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -28,7 +29,7 @@ public class StockController {
 
     @GetMapping("/trading")
     public String showTradingPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        List<Stock> stocks = stockRepository.findAll();
+        List<Stock> stocks = findAllWithNotNullQty();
         User user = userService.findByUsername(userDetails.getUsername());
         model.addAttribute("stocks", stocks);
         model.addAttribute("user", user);
@@ -39,22 +40,19 @@ public class StockController {
     @ResponseBody
     public ResponseEntity<?> buyStock(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String company, @RequestParam int quantity) {
         try {
-            Stock stock = stockRepository.findByCompanyName(company).get(0);
-            log.info("ТУТ");
+            Stock stock = stockRepository.findByCompanyName(company);
             stockService.buyProduct(userDetails, stock, quantity);
-            log.error("ТУТ");
             return ResponseEntity.ok().body("Stock purchased successfully!");
-        } catch (StockService.InsufficientBalanceException e) {
+        } catch (InsufficientBalanceException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing the request.");
         }
     }
 
-//    @PostMapping("/buy-stock")
-//    public String buyStock(@AuthenticationPrincipal Principal principal, Stock stock, int quantity) {
-//        stockService.buyProduct(principal, stock, quantity);
-//        return "redirect:/trading";
-//    }
-
+    private List<Stock> findAllWithNotNullQty() {
+        return stockRepository.findAll().stream()
+                .filter(stock -> stock.getAvailableQuantity() != 0)
+                .collect(Collectors.toList());
+    }
 }

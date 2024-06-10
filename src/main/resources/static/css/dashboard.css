@@ -72,3 +72,205 @@ h1 {
 .btn:hover {
     background-color: #0056b3;
 }
+
+.stocks-details {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f8f8f8;
+    margin-top: 20px;
+}
+
+.stocks-details p {
+    margin: 10px 0;
+}
+
+.stocks-details strong {
+    font-weight: bold;
+}
+
+.table {
+    border: 1px solid #cccccc !important;
+    background-color: var(--g-color-neutral-base-100, var(--colorBackgroundAlt));
+    font-size: inherit;
+    width: 100%;
+}
+
+.table_bordered {
+
+    border-collapse: separate;
+    border-top: var(--borderWidthThin, 1px) solid var(--g-color-border-base-1, var(--colorBorder));
+    border-bottom: var(--borderWidthThin, 1px) solid var(--g-color-border-base-1, var(--colorBorder));
+    border-right: var(--borderWidthThin, 1px) solid var(--g-color-border-base-1, var(--colorBorder));
+    border-left: var(--borderWidthThin, 1px) solid var(--g-color-border-base-1, var(--colorBorder));
+}
+
+.text-title_caps {
+    font-size: 0.75rem;
+    line-height: 1.25;
+    color: var(--g-color-neutral-base-30, var(--colorTextWeak));
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .0625rem;
+}
+
+.tableHeader {
+    background-color: #f3f3f3;
+    padding-left: 2px !important;
+}
+
+.tableHeader:hover {
+    background-color: #f8f8f8;
+}
+
+.text-link--reset, .text-link--reset:active, .text-link--reset:focus {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.text-link--reset {
+    cursor: pointer;
+    line-height: inherit;
+    font-size: inherit;
+}
+
+.cell-wrap {
+    white-space: pre-line;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.containerSpan {
+    float: right;
+    margin-left: 5px;
+    display: flex;
+}
+
+.arrowSpan {
+    align-self: center;
+}
+
+.truncate {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sell-btn {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+thead {
+    display: table-header-group;
+    vertical-align: middle;
+    unicode-bidi: isolate;
+    border-color: inherit;
+}
+
+
+.thead {
+    display: table-header-group;
+    vertical-align: middle;
+    unicode-bidi: isolate;
+    border-color: inherit;
+}
+
+.table td {
+    border: 1px solid #cccccc !important;
+    padding-left: 2px !important;
+    text-align: left;
+}
+
+#overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+#sellModal {
+    width: 20rem;
+    display: none;
+    position: fixed;
+    z-index: 2;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: solid #c8c8c8;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content {
+    text-align: center;
+}
+
+#closeModal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.error {
+    background-color: #ffcccc;
+    color: #ff0000;
+    font-size: 18px;
+    border: 1px solid #ff0000;
+    top: 10px;
+    left: 50%;
+    z-index: 9999;
+}
+
+.notification-container {
+    width: 100%;
+    display: flex;
+    /*justify-content: center;*/
+    /*align-items: start;*/
+    flex-direction: column;
+}
+
+.notification {
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    padding: 5px;
+    position: fixed;
+    margin-bottom: 5%;
+    border-radius: 10px;
+    text-align: center;
+    display: none;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.success {
+    padding: 5px;
+    font-size: 18px;
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #494949;
+}
+
+.notification-success {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    top: 20px;
+}

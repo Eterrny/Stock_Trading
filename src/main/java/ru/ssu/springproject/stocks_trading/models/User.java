@@ -6,12 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.ssu.springproject.stocks_trading.models.enums.Role;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name= "users")
@@ -29,11 +26,6 @@ public class User implements UserDetails {
     private String password;
     @Column(name="role")
     private String role;
-//    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-//    @CollectionTable(name = "user_role",
-//            joinColumns = @JoinColumn(name = "user_id"))
-//    @Enumerated(EnumType.STRING)
-//    private Set<Role> roles = new HashSet<>();
     @Column(name = "tariff", nullable = false)
     private String tariff;
     @Column(name = "balance", nullable = false)
@@ -41,7 +33,7 @@ public class User implements UserDetails {
     @Column(name = "is_active")
     private Integer isActive;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserStock> stocks;
 
     @Override
@@ -77,6 +69,19 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isActive == 1;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                ", tariff='" + tariff + '\'' +
+                ", balance=" + balance +
+                ", isActive=" + isActive +
+                '}';
     }
 }
 

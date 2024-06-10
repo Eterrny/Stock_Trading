@@ -121,20 +121,20 @@ h1 {
 }
 
 .table {
-    background-color: var(--g-color-neutral-base-100, var(--colorBackgroundAlt, rgb(255, 255, 255)));
+    background-color: var(--g-color-neutral-base-100, var(--colorBackgroundAlt));
     font-size: inherit;
     width: 100%;
 }
 
-.tableHeader.is-sorted_asc .companyNameArrow[data-sort-direction="asc"],
-.tableHeader.is-sorted_desc .companyNameArrow[data-sort-direction="desc"] {
-    display: inline;
-}
-
-.tableHeader.is-sorted_asc .companyNameArrow[data-sort-direction="desc"],
-.tableHeader.is-sorted_desc .companyNameArrow[data-sort-direction="asc"] {
-    display: none;
-}
+/*.tableHeader.is-sorted_asc .companyNameArrow[data-sort-direction="asc"],*/
+/*.tableHeader.is-sorted_desc .companyNameArrow[data-sort-direction="desc"] {*/
+/*    display: inline;*/
+/*}*/
+/**/
+/*.tableHeader.is-sorted_asc .companyNameArrow[data-sort-direction="desc"],*/
+/*.tableHeader.is-sorted_desc .companyNameArrow[data-sort-direction="asc"] {*/
+/*    display: none;*/
+/*}*/
 
 .table_bordered {
     border-collapse: separate;
