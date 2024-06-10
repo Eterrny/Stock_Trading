@@ -18,19 +18,6 @@ public class UserController {
 //    public String showLoginPage() {
 //        return "login";
 //    }
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-//    @GetMapping("/profile")
-//    public UserDTO getUserProfile(Neo4jProperties.Authentication authentication) {
-//        String username = authentication.getUsername();
-//        User user = userService.findByUsername(username);
-//        return new UserDTO(user);
-//    }
-
-
 }
 
 

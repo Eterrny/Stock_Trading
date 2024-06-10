@@ -41,6 +41,9 @@ public class User implements UserDetails {
     @Column(name = "is_active")
     private Integer isActive;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
+    private List<UserStock> stocks;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();

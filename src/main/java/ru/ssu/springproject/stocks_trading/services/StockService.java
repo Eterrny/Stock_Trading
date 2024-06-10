@@ -22,13 +22,6 @@ public class StockService {
             return stockRepository.findAll();
         }
         return stockRepository.findByCompanyName(companyName);
-//        List<Stock> stocks = stockRepository.findAll();
-//        List<Stock> foundStocks = new ArrayList<>();
-//        for (Stock stock : stocks) {
-//            if (stock.getCompanyName().contains(companyName)) {
-//                stocks.add(stock);
-//            }
-//        }
     }
 
 

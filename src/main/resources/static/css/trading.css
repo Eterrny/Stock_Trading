@@ -1,0 +1,242 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 100%;
+    /*margin: 50px auto;*/
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    color: #333;
+    margin: 0;
+}
+
+.user-info {
+    text-align: center;
+}
+
+.stocks-details {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f8f8f8;
+    margin-top: 20px;
+}
+
+.stocks-details p {
+    margin: 10px 0;
+}
+
+.stocks-details strong {
+    font-weight: bold;
+}
+
+.btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    margin-top: 10px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    position: absolute;
+    top: 1%;
+}
+
+.logout {
+    right: 20px;
+}
+
+.dashboard {
+    right: 130px;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+#overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+#buyModal {
+    width: 20rem;
+    display: none;
+    position: fixed;
+    z-index: 2;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: solid #c8c8c8;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content {
+    text-align: center;
+}
+
+#closeModal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.thead {
+    display: table-header-group;
+    vertical-align: middle;
+    unicode-bidi: isolate;
+    border-color: inherit;
+}
+
+.table {
+    background-color: var(--g-color-neutral-base-100, var(--colorBackgroundAlt, rgb(255, 255, 255)));
+    font-size: inherit;
+    width: 100%;
+    /*background-color: #f3f3f3;*/
+    /*color: #444444;*/
+    /*padding: var(--tablecellSpacing)*/
+}
+
+.tableHeader.is-sorted_asc .companyNameArrow[data-sort-direction="asc"],
+.tableHeader.is-sorted_desc .companyNameArrow[data-sort-direction="desc"] {
+    display: inline;
+}
+
+.tableHeader.is-sorted_asc .companyNameArrow[data-sort-direction="desc"],
+.tableHeader.is-sorted_desc .companyNameArrow[data-sort-direction="asc"] {
+    display: none;
+}
+
+.table_bordered {
+    border-collapse: separate;
+    border-top: var(--borderWidthThin, 1px) solid var(--g-color-border-base-1, var(--colorBorder));
+    border-bottom: var(--borderWidthThin, 1px) solid var(--g-color-border-base-1, var(--colorBorder));
+    border-right: var(--borderWidthThin, 1px) solid var(--g-color-border-base-1, var(--colorBorder));
+    border-left: var(--borderWidthThin, 1px) solid var(--g-color-border-base-1, var(--colorBorder));
+}
+
+.text-title_caps {
+    font-size: 0.75rem;
+    line-height: 1.25;
+    color: var(--g-color-neutral-base-30, var(--colorTextWeak));
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .0625rem;
+}
+
+.cell-wrap {
+    white-space: pre-line;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.tableHeader {
+    background-color: #f3f3f3;
+    padding-left: 2px !important;
+}
+
+.tableHeader:hover {
+    background-color: #f8f8f8;
+}
+
+thead {
+    display: table-header-group;
+    vertical-align: middle;
+    unicode-bidi: isolate;
+    border-color: inherit;
+}
+
+.table td {
+    border: 1px solid #cccccc;
+    padding-left: 2px !important;
+    text-align: left;
+}
+
+.buy-btn {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.th__action {
+    display: flex;
+    padding: var(--lwc-tableCellSpacing, 0.25rem 0.5rem);
+    height: 2rem;
+    align-items: center;
+}
+
+.text-link--reset, .text-link--reset:active, .text-link--reset:focus {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.text-link--reset {
+    cursor: pointer;
+    line-height: inherit;
+    font-size: inherit;
+}
+
+.containerSpan {
+    float: right;
+    margin-left: 5px;
+    display: flex;
+}
+
+.arrowSpan {
+    align-self: center;
+}
+
+.hidden_custom {
+    display: none !important;
+}
+
+.truncate {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+:root {
+    --tablecellSpacing: 0.25rem, 0.5rem;
+    --borderWidthThin: 1px;
+    --g-color-border-base-1: #c8c8c8;
+    --colorBorder: rgb(229, 229, 229);
+    --g-color-neutral-base-30: #444444;
+    --colorTextWeak: rgb(68, 68, 68);
+    --g-color-neutral-base-100: #ffffff;
+    --colorBackgroundAlt: rgb(255, 255, 255);
+}
+

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Table(name = "stocks")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Stock {
@@ -21,6 +22,6 @@ public class Stock {
     @Column(name = "sell_price", nullable = false)
     private Double sellPrice;
     @Column(name = "available_quantity", nullable = false)
-    private Integer availableShares;
+    private Integer availableQuantity;
 }
 

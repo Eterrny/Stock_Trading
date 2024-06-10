@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading</title>
+    <link rel="stylesheet" href="/css/trading.css">
+</head>
+<body>
+<div class="container">
+    <div class="user-info">
+        <h1>Trading</h1>
+        <form title="Dashboard" th:action="@{/dashboard}">
+            <input type="submit" class="btn dashboard" value="Dashboard">
+        </form>
+        <form title="Log Out" th:action="@{/logout}" method="post">
+            <input type="submit" class="btn logout" value="Log Out"/>
+        </form>
+        <p style="text-align: right"><strong>Your Balance:</strong> <span th:text="${user.balance}"></span></p>
+        <div class="stocks-details">
+            <table class="table table_bordered">
+                <thead>
+                <tr class="text-title_caps">
+                    <th scope="col" class="tableHeader" data-field-sort="companyName"
+                        onclick="sortTable('companyName')">
+                        <a href="javascript:void(0);" class="text-link--reset">
+                            <div style="width: 100%; display: flex;">
+                                <span class="cell-wrap" title="Company Name">
+                                    Company Name
+                                </span>
+                                <span class="containerSpan">
+                                    <span class="companyNameArrow arrowSpan" data-sort-direction="asc">&#9650;</span>
+                                    <span class="companyNameArrow arrowSpan" data-sort-direction="desc">&#9660;</span>
+                                </span>
+                            </div>
+                        </a>
+                    </th>
+                    <th scope="col" class="tableHeader" data-field-sort="buyPrice" onclick="sortTable('buyPrice')">
+                        <a href="javascript:void(0);" class="text-link--reset">
+                            <div style="width: 100%; display: flex;">
+                                <span class="cell-wrap" title="Buy Price">
+                                    Buy Price
+                                </span>
+                                <span class="containerSpan">
+                                    <span class="buyPriceArrow arrowSpan" data-sort-direction="asc">&#9650;</span>
+                                    <span class="buyPriceArrow arrowSpan" data-sort-direction="desc">&#9660;</span>
+                                </span>
+                            </div>
+                        </a>
+                    </th>
+                    <th scope="col" class="tableHeader" data-field-sort="sellPrice" onclick="sortTable('sellPrice')">
+                        <a href="javascript:void(0);" class="text-link--reset">
+                            <div style="width: 100%; display: flex;">
+                                <span class="cell-wrap" title="Sell Price">
+                                    Sell Price
+                                </span>
+                                <span class="containerSpan">
+                                    <span class="sellPriceArrow arrowSpan" data-sort-direction="asc">&#9650;</span>
+                                    <span class="sellPriceArrow arrowSpan" data-sort-direction="desc">&#9660;</span>
+                                </span>
+                            </div>
+                        </a>
+                    </th>
+                    <th scope="col" class="tableHeader" data-field-sort="availableQuantity"
+                        onclick="sortTable('availableQuantity')">
+                        <a href="javascript:void(0);" class="text-link--reset">
+                            <div style="width: 100%; display: flex;">
+                                <span class="cell-wrap" title="Available Quantity">
+                                    Available Quantity
+                                </span>
+                                <span class="containerSpan">
+                                    <span class="availableQuantityArrow arrowSpan" data-sort-direction="asc">&#9650;</span>
+                                    <span class="availableQuantityArrow arrowSpan" data-sort-direction="desc">&#9660;</span>
+                                </span>
+                            </div>
+                        </a>
+                    </th>
+                    <th scope="col" class="tableHeader">
+                        <div class="cell-wrap">
+                            Action
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="stocksTableBody">
+                <tr th:each="stock : ${stocks}">
+                    <td class="truncate cell-wrap" th:title="${stock.companyName}" th:text="${stock.companyName}"></td>
+                    <td class="truncate cell-wrap" th:text="${stock.buyPrice}" th:title="${stock.buyPrice}"></td>
+                    <td class="truncate cell-wrap" th:text="${stock.sellPrice}" th:title="${stock.sellPrice}"></td>
+                    <td class="truncate cell-wrap" th:text="${stock.availableQuantity}"
+                        th:title="${stock.availableQuantity}"></td>
+                    <td>
+                        <button type="button" title="Buy Stock" class="buy-btn" th:data-company="${stock.companyName}"
+                                th:data-quantity="${stock.availableQuantity}">Buy
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="overlay"></div>
+<div id="buyModal">
+    <div class="modal-content">
+        <span id="closeModal">&times;</span>
+        <h2>Buy Stock</h2>
+        <form id="buyForm">
+            <p>Company: <span id="companyName"></span></p>
+            <p>
+                Quantity:
+                <input type="number" id="quantityInput" name="quantity" min="1" required>
+                <a href="javascript:void(0)" title="Set Max Quantity" class="max-set"
+                   style="text-underline-mode: 1">max</a>
+            </p>
+            <button type="submit">Buy</button>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/trading.js"></script>
+</body>
+</html>
