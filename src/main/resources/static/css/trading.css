@@ -124,9 +124,6 @@ h1 {
     background-color: var(--g-color-neutral-base-100, var(--colorBackgroundAlt, rgb(255, 255, 255)));
     font-size: inherit;
     width: 100%;
-    /*background-color: #f3f3f3;*/
-    /*color: #444444;*/
-    /*padding: var(--tablecellSpacing)*/
 }
 
 .tableHeader.is-sorted_asc .companyNameArrow[data-sort-direction="asc"],
@@ -229,6 +226,57 @@ thead {
     white-space: nowrap;
 }
 
+.error {
+    background-color: #ffcccc;
+    color: #ff0000;
+    font-size: 18px;
+    border: 1px solid #ff0000;
+    top: 10px;
+    left: 50%;
+    z-index: 9999;
+}
+
+.notification-container {
+    width: 100%;
+    display: flex;
+    /*justify-content: center;*/
+    /*align-items: start;*/
+    flex-direction: column;
+}
+
+.notification {
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    padding: 5px;
+    position: fixed;
+    margin-bottom: 5%;
+    border-radius: 10px;
+    text-align: center;
+    display: none;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.success {
+    padding: 5px;
+    font-size: 18px;
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #494949;
+}
+
+.notification-success {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    top: 20px;
+}
+
 :root {
     --tablecellSpacing: 0.25rem, 0.5rem;
     --borderWidthThin: 1px;
@@ -239,4 +287,3 @@ thead {
     --g-color-neutral-base-100: #ffffff;
     --colorBackgroundAlt: rgb(255, 255, 255);
 }
-

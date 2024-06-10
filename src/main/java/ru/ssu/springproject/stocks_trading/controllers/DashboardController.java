@@ -33,6 +33,7 @@ public class DashboardController {
 //        model.addAttribute("tariff", user.getTariff());
         model.addAttribute("user", user);
         model.addAttribute("name", user.getUsername());
+        model.addAttribute("user_stocks", user.getStocks());
         return "dashboard";
     }
 }

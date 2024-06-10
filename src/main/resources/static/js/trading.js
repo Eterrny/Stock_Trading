@@ -1,9 +1,21 @@
 $(document).ready(function () {
+    const csrfToken = $('meta[name="_csrf"]').attr('content');
+    const csrfHeader = $('meta[name="_csrf_header"]').attr('content');
 
-    //$('.arrowSpan[data-sort-direction="desc"]').hide();
+    const tariffs = {
+        'premium': 0.005,
+        'pro': 0.01,
+        'novice': 0.03
+    };
+
+    let userTariff;
+    let userBalance = parseFloat($('#userBalance').text());
+
+    $.get("/current-user-tariff", function (data) {
+        userTariff = data.toLowerCase();
+    });
 
     window.sortTable = function(fieldName) {
-
         let tableBody = $('#stocksTableBody');
         let rows = tableBody.find('tr').get();
         let header = $('.tableHeader[data-field-sort="' + fieldName + '"]');
@@ -26,18 +38,6 @@ $(document).ready(function () {
             tableBody.append(row);
         });
 
-        // $('.tableHeader[data-field-sort]').data('sort-direction', 'asc');
-        // if (sortDirection === 'asc') {
-        //     $('.tableHeader[data-field-sort="' + fieldName + '"]').data('sort-direction', 'desc');
-        // } else {
-        //     $('.tableHeader[data-field-sort="' + fieldName + '"]').data('sort-direction', 'asc');
-        // }
-        //
-
-        // // обновить стрелки
-        // $('arrowSpan').show();
-        // $('.arrowSpan[data-sort-direction="' + (sortDirection === 'asc' ? 'desc' : 'asc') + '"]').hide();
-
         // Стрелка для текущего столбца
         let newSortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
         header.data('sort-direction', newSortDirection);
@@ -46,16 +46,6 @@ $(document).ready(function () {
         $('.arrowSpan[data-sort-direction="asc"]').show();
         header.find('.arrowSpan').show();
         header.find('.arrowSpan[data-sort-direction="' + newSortDirection + '"]').hide();
-
-
-        // // Сбросить направление сортировки для всех заголовков
-        // $('.tableHeader[data-field-sort]').data('sort-direction', 'asc');
-        // // Установить правильное направление сортировки для текущего заголовка
-        // header.data('sort-direction', (sortDirection === 'asc' ? 'desc' : 'asc'));
-        //
-        // // Обновить стрелки
-        // $('.arrowSpan').hide();
-        // header.find('.arrowSpan[data-sort-direction="' + header.data('sort-direction') + '"]').show();
     };
 
     function getColumnIndex(fieldName) {
@@ -80,15 +70,23 @@ $(document).ready(function () {
         $('#overlay').show();
         $('#companyName').text(company);
         $('#quantityInput').attr('max', availableQuantity).val(1);
+        const buyPrice = parseFloat($(this).closest('tr').find('td').eq(1).text());
+        updateTotalCost(buyPrice);
     });
-
-    // $(document).on('click', '.max-set', function () {
-    //     const availableQuantity = $(this).data('quantity');
-    //     $('#quantityInput').val(availableQuantity);
-    // });
 
     $('.max-set').click(function () {
         $('#quantityInput').val($('#quantityInput').attr('max'));
+        const buyPrice = parseFloat($('#stocksTableBody').find('td:contains(' + $('#companyName').text() + ')').next().text());
+        updateTotalCost(buyPrice);
+    });
+
+    $('#quantityInput').on('input', function () {
+        let qty = $('#quantityInput');
+        if (qty.val() < 1) {
+            qty.val(1);
+        }
+        const buyPrice = parseFloat($('#stocksTableBody').find('td:contains(' + $('#companyName').text() + ')').next().text());
+        updateTotalCost(buyPrice);
     });
 
     $('#closeModal').click(function () {
@@ -97,9 +95,69 @@ $(document).ready(function () {
     });
 
     $('#buyForm').submit(function (event) {
+        // event.preventDefault();
+        // $('#buyModal').hide();
+        // $('#overlay').hide();
+        // alert('Stock purchased successfully!');
         event.preventDefault();
-        $('#buyModal').hide();
-        $('#overlay').hide();
-        alert('Stock purchased successfully!');
+        const quantity = $('#quantityInput').val();
+        const buyPrice = parseFloat($('#stocksTableBody').find('td:contains(' + $('#companyName').text() + ')').next().text());
+        const totalCost = buyPrice * quantity * (1 + tariffs[userTariff]);
+
+        if (userBalance >= totalCost) {
+            // $.post('/buy-stock', { company: $('#companyName').text(), quantity: quantity }, function (response) {
+            //     if (response.success) {
+            //         alert('Stock purchased successfully!');
+            //         userBalance -= totalCost;
+            //         $('#userBalance').text(userBalance.toFixed(2));
+            //     } else {
+            //         alert('Error: ' + response.message);
+            //     }
+            //     $('#buyModal').hide();
+            //     $('#overlay').hide();
+            // });
+            $.ajax({
+                url: '/buy-stock',
+                type: 'POST',
+                headers: {
+                    [csrfHeader]: csrfToken
+                },
+                data: {
+                    company: $('#companyName').text(),
+                    quantity: quantity
+                },
+                success: function (response) {
+                    showSuccessMessage(response);
+                    userBalance -= totalCost;
+                    $('#userBalance').text(userBalance.toFixed(1));
+                    $('#buyModal').hide();
+                    $('#overlay').hide();
+                },
+                error: function (xhr, status, error) {
+                    showError(xhr.responseText);
+                }
+            });
+        } else {
+            showError('Insufficient balance to complete the purchase.')
+        }
     });
+
+    function updateTotalCost(buyPrice) {
+        const quantity = $('#quantityInput').val();
+        const commissionRate = tariffs[userTariff];
+        const totalCost = buyPrice * quantity * (1 + commissionRate);
+        $('#totalCost').text(totalCost.toFixed(2));
+    }
+
+    function showError(message) {
+        const errorAlert = $('#errorAlert');
+        errorAlert.html('<strong>Error:</strong> ' + message);
+        errorAlert.fadeIn().delay(3000).fadeOut();
+    }
+
+    function showSuccessMessage(message) {
+        const successMessage = $('#success');
+        successMessage.html(message);
+        successMessage.fadeIn().delay(3000).fadeOut();
+    }
 });

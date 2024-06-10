@@ -11,7 +11,7 @@ public class UserStock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "stock_id", nullable = false)
+    @JoinColumn
     private Stock stock;
     @Column(name = "quantity", nullable = false)
     private Integer quantity;

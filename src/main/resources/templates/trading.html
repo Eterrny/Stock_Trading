@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trading</title>
     <link rel="stylesheet" href="/css/trading.css">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
 <div class="container">
@@ -16,7 +18,7 @@
         <form title="Log Out" th:action="@{/logout}" method="post">
             <input type="submit" class="btn logout" value="Log Out"/>
         </form>
-        <p style="text-align: right"><strong>Your Balance:</strong> <span th:text="${user.balance}"></span></p>
+        <p style="text-align: right"><strong>Your Balance:</strong> <span id="userBalance" th:text="${user.balance}"></span></p>
         <div class="stocks-details">
             <table class="table table_bordered">
                 <thead>
@@ -108,15 +110,27 @@
         <form id="buyForm">
             <p>Company: <span id="companyName"></span></p>
             <p>
-                Quantity:
+                <label for="quantityInput">Quantity:</label>
                 <input type="number" id="quantityInput" name="quantity" min="1" required>
                 <a href="javascript:void(0)" title="Set Max Quantity" class="max-set"
                    style="text-underline-mode: 1">max</a>
             </p>
+            <p><strong>Total Cost:</strong> <span id="totalCost"></span></p>
             <button type="submit">Buy</button>
         </form>
     </div>
 </div>
+<div class="notification-container">
+    <div id="errorAlert" class="notification error">
+        <strong>Error:</strong> Insufficient balance to complete the purchase.
+    </div>
+</div>
+<div class="notification-success">
+    <div id="success" class="notification success">
+        You have been logged out.
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/trading.js"></script>
 </body>
