@@ -31,13 +31,11 @@ public class DashboardService {
     public void sellProduct(User user, UserStock userStock, int quantity) {
         log.info("Starting the sellProduct method for user: {}, stock: {}, quantity: {}", user.getUsername(), userStock.getStockName(), quantity);
 
-        checkTradingHours();
         if (userStock.getQuantity() < quantity) {
             throw new NotEnoughQuantityException("Not enough stocks to sell");
         }
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
+        checkTradingHours();
+
         double commissionRate = getCommissionRate(user.getTariff());
         double totalCost = userStock.getAveragePrice() * quantity * (1 - commissionRate);
         log.info("Total cost for selling stock: {}, quantity: {}, at price: {}, with commission: {} is {}", userStock.getStockName(), quantity, userStock.getAveragePrice(), commissionRate, totalCost);

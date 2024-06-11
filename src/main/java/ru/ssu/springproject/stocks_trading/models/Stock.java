@@ -24,4 +24,3 @@ public class Stock {
     @Column(name = "available_quantity", nullable = false)
     private Integer availableQuantity;
 }
-
