@@ -8,12 +8,20 @@ $(document).ready(function () {
         'novice': 0.03
     };
 
-    let userTariff;
+    let userCommissionRate;
     let userBalance = parseFloat($('#userBalance').text());
 
     $.get("/current-user-tariff", function (data) {
-        userTariff = data.toLowerCase();
+        userCommissionRate = parseFloat(data) % 100;
+        // console.log("User commission rate: " + userCommissionRate);
     });
+
+    function checkTradingHours() {
+        const now = new Date();
+        const utcHour = now.getUTCHours();
+        const mskHour = (utcHour + 3) % 24;
+        return mskHour >= 10 && mskHour < 22;
+    }
 
     window.sortTable = function (fieldName) {
         let tableBody = $('#stocksTableBody');
@@ -62,6 +70,10 @@ $(document).ready(function () {
     }
 
     $('.sell-btn').click(function () {
+        if (!checkTradingHours()) {
+            showMessage("The trading platform is closed.<br>Working Hours: 10:00 - 22:00 (UTC+3)")
+            return;
+        }
         const company = $(this).data('company');
         const row = $('#stocksTableBody').find('tr:contains(' + company + ')');
         const quantityCell = row.find('td').eq(2);
@@ -113,11 +125,11 @@ $(document).ready(function () {
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             data: $.param(data),
             success: function (response) {
-                showSuccessMessage(response);
+                showMessage(response);
                 const sellPrice = parseFloat($('#stocksTableBody').find('td:contains(' + stockName + ')').next().text());
-                const totalCost = sellPrice * quantity * (1 - tariffs[userTariff]);
+                const totalCost = sellPrice * quantity * (1 - userCommissionRate);
                 userBalance += totalCost;
-                $('#userBalance').text(userBalance.toFixed(1));
+                $('#userBalance').text(userBalance.toFixed(2));
                 updateTable(stockName, quantity);
                 $('#sellModal').hide();
                 $('#overlay').hide();
@@ -131,8 +143,7 @@ $(document).ready(function () {
 
     function updateTotalCost(sellPrice) {
         const quantity = $('#quantityInput').val();
-        const commissionRate = tariffs[userTariff];
-        const totalCost = sellPrice * quantity * (1 - commissionRate);
+        const totalCost = sellPrice * quantity * (1 - userCommissionRate);
         $('#totalCost').text(totalCost.toFixed(2));
     }
 
@@ -155,7 +166,7 @@ $(document).ready(function () {
         errorAlert.fadeIn().delay(3000).fadeOut();
     }
 
-    function showSuccessMessage(message) {
+    function showMessage(message) {
         const successMessage = $('#success');
         successMessage.html(message);
         successMessage.fadeIn().delay(3000).fadeOut();

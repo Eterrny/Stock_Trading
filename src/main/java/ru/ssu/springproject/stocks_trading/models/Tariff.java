@@ -1,18 +1,22 @@
-//package ru.ssu.springproject.stocks_trading.models;
-//
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.GeneratedValue;
-//import jakarta.persistence.GenerationType;
-//import jakarta.persistence.Id;
-//import lombok.Data;
-//
-//@Entity
-//@Data
-//public class Tariff {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//    private String name;
-//    private Double commissionPercentage;
-//}
-//
+package ru.ssu.springproject.stocks_trading.models;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name= "tariffs")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Tariff {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+    @Column(name = "tariff")
+    private String name;
+    @Column(name = "commission")
+    private Double commissionPercentage;
+}

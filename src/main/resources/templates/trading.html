@@ -19,7 +19,7 @@
             <input type="submit" class="btn logout" value="Log Out"/>
         </form>
         <p style="text-align: right"><strong>Your Balance:</strong> <span id="userBalance" th:text="${user.balance}"></span></p>
-        <div class="stocks-details">
+        <div id="stocksDetails" class="stocks-details">
             <table class="table table_bordered">
                 <thead>
                 <tr class="text-title_caps">
@@ -101,6 +101,10 @@
             </table>
         </div>
     </div>
+</div>
+<div id="closedMessage" style="display:none;">
+    <h2 >The trading platform is closed.<br>Working Hours: 10:00 - 22:00 (UTC+3)</h2>
+    <img src="/images/sad_smile.jpg"  alt="Sad Smiley">
 </div>
 <div id="overlay"></div>
 <div id="buyModal">

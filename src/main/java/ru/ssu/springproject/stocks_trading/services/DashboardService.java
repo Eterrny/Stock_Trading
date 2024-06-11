@@ -6,12 +6,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ssu.springproject.stocks_trading.exceptions.NotEnoughQuantityException;
+import ru.ssu.springproject.stocks_trading.exceptions.TradingPlatformClosedException;
 import ru.ssu.springproject.stocks_trading.models.Stock;
 import ru.ssu.springproject.stocks_trading.models.User;
 import ru.ssu.springproject.stocks_trading.models.UserStock;
 import ru.ssu.springproject.stocks_trading.repositories.StockRepository;
 import ru.ssu.springproject.stocks_trading.repositories.UserRepository;
 import ru.ssu.springproject.stocks_trading.repositories.UserStockRepository;
+import ru.ssu.springproject.stocks_trading.repositories.TariffRepository;
+
+import java.time.LocalTime;
+import java.time.ZoneId;
 
 @Service
 @Slf4j
@@ -20,11 +25,13 @@ public class DashboardService {
     private final UserRepository userRepository;
     private final UserStockRepository userStockRepository;
     private final StockRepository stockRepository;
+    private final TariffRepository tariffRepository;
 
     @Transactional
     public void sellProduct(User user, UserStock userStock, int quantity) {
         log.info("Starting the sellProduct method for user: {}, stock: {}, quantity: {}", user.getUsername(), userStock.getStockName(), quantity);
 
+        checkTradingHours();
         if (userStock.getQuantity() < quantity) {
             throw new NotEnoughQuantityException("Not enough stocks to sell");
         }
@@ -64,11 +71,21 @@ public class DashboardService {
     }
 
     private double getCommissionRate(String tariff) {
-        return switch (tariff.toLowerCase()) {
-            case "premium" -> 0.005;
-            case "pro" -> 0.01;
-            case "novice" -> 0.03;
-            default -> 0.05;
-        };
+        Double commissionRate = tariffRepository.findCommissionPercentageByName(tariff);
+        if (commissionRate == null) {
+            return 0.05;
+        }
+        return commissionRate % 100;
+    }
+
+    private void checkTradingHours() {
+        LocalTime startWorkingHours = LocalTime.of(10, 0);
+        LocalTime endWorkingHours = LocalTime.of(22, 0);
+        ZoneId zoneId = ZoneId.of("UTC+3");
+        LocalTime currentTime = LocalTime.now(zoneId);
+        if (currentTime.isBefore(startWorkingHours) || currentTime.isAfter(endWorkingHours)) {
+            log.warn("Attempt to sell stock outside of working hours: current time: {}", currentTime);
+            throw new TradingPlatformClosedException("Trading platform is closed. Working hours: 10:00 - 22:00 (UTC+3)");
+        }
     }
 }

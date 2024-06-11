@@ -7,12 +7,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.ssu.springproject.stocks_trading.exceptions.InsufficientBalanceException;
 import ru.ssu.springproject.stocks_trading.exceptions.NotEnoughQuantityException;
+import ru.ssu.springproject.stocks_trading.exceptions.TradingPlatformClosedException;
 import ru.ssu.springproject.stocks_trading.models.Stock;
 import ru.ssu.springproject.stocks_trading.models.User;
 import ru.ssu.springproject.stocks_trading.models.UserStock;
 import ru.ssu.springproject.stocks_trading.repositories.StockRepository;
 import ru.ssu.springproject.stocks_trading.repositories.UserRepository;
 import ru.ssu.springproject.stocks_trading.repositories.UserStockRepository;
+import ru.ssu.springproject.stocks_trading.repositories.TariffRepository;
+
+import java.time.LocalTime;
+import java.time.ZoneId;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +27,12 @@ public class StockService {
     private final StockRepository stockRepository;
     private final UserRepository userRepository;
     private final UserStockRepository userStockRepository;
+    private final TariffRepository tariffRepository;
 
     public void buyProduct(UserDetails userDetails, Stock stock, int quantity) {
         log.info("Request to buy stock: {}, quantity: {} for user: {}", stock.getCompanyName(), quantity, userDetails.getUsername());
 
+        checkTradingHours();
         if (stock.getAvailableQuantity() < quantity) {
             log.warn("Not enough stock available to buy: requested {}, available {}", quantity, stock.getAvailableQuantity());
             throw new NotEnoughQuantityException("Not enough stock to buy");
@@ -73,11 +80,21 @@ public class StockService {
     }
 
     private double getCommissionRate(String tariff) {
-        return switch (tariff.toLowerCase()) {
-            case "premium" -> 0.005;
-            case "pro" -> 0.01;
-            case "novice" -> 0.03;
-            default -> 0.05;
-        };
+        Double commissionRate = tariffRepository.findCommissionPercentageByName(tariff);
+        if (commissionRate == null) {
+            return 0.05;
+        }
+        return commissionRate % 100;
+    }
+
+    private void checkTradingHours() {
+        LocalTime startWorkingHours = LocalTime.of(10, 0);
+        LocalTime endWorkingHours = LocalTime.of(22, 0);
+        ZoneId zoneId = ZoneId.of("UTC+3");
+        LocalTime currentTime = LocalTime.now(zoneId);
+        if (currentTime.isBefore(startWorkingHours) || currentTime.isAfter(endWorkingHours)) {
+            log.warn("Attempt to buy stock outside of working hours: current time: {}", currentTime);
+            throw new TradingPlatformClosedException("Trading platform is closed. Working hours: 10:00 - 22:00 (UTC+3)");
+        }
     }
 }

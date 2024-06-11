@@ -8,12 +8,30 @@ $(document).ready(function () {
         'novice': 0.03
     };
 
-    let userTariff;
+    let userCommissionRate;
     let userBalance = parseFloat($('#userBalance').text());
 
     $.get("/current-user-tariff", function (data) {
-        userTariff = data.toLowerCase();
+        userCommissionRate = parseFloat(data) % 100;
+        // console.log("User commission rate: " + userCommissionRate);
     });
+
+    function checkTradingHours() {
+        const now = new Date();
+        const utcHour = now.getUTCHours();
+        const mskHour = (utcHour + 3) % 24;
+
+        if (mskHour >= 10 && mskHour < 22) {
+            $('#stocksDetails').show();
+            $('#closedMessage').hide();
+        } else {
+            $('#stocksDetails').hide();
+            $('#closedMessage').show();
+        }
+    }
+
+    checkTradingHours();
+    setInterval(checkTradingHours, 60000);
 
     window.sortTable = function(fieldName) {
         let tableBody = $('#stocksTableBody');
@@ -100,7 +118,7 @@ $(document).ready(function () {
         event.preventDefault();
         const quantity = $('#quantityInput').val();
         const buyPrice = parseFloat($('#stocksTableBody').find('td:contains(' + $('#companyName').text() + ')').next().text());
-        const totalCost = buyPrice * quantity * (1 + tariffs[userTariff]);
+        const totalCost = buyPrice * quantity * (1 + userCommissionRate);
 
         if (userBalance >= totalCost) {
             $.ajax({
@@ -116,7 +134,7 @@ $(document).ready(function () {
                 success: function (response) {
                     showSuccessMessage(response);
                     userBalance -= totalCost;
-                    $('#userBalance').text(userBalance.toFixed(1));
+                    $('#userBalance').text(userBalance.toFixed(2));
                     updateTable($('#companyName').text(), quantity)
                     $('#buyModal').hide();
                     $('#overlay').hide();
@@ -132,8 +150,7 @@ $(document).ready(function () {
 
     function updateTotalCost(buyPrice) {
         const quantity = $('#quantityInput').val();
-        const commissionRate = tariffs[userTariff];
-        const totalCost = buyPrice * quantity * (1 + commissionRate);
+        const totalCost = buyPrice * quantity * (1 + userCommissionRate);
         $('#totalCost').text(totalCost.toFixed(2));
     }
 
