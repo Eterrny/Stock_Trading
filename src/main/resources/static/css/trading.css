@@ -16,10 +16,6 @@ body {
     position: relative;
 }
 
-/*.container p {*/
-/*    display: none;*/
-/*}*/
-
 #closedMessage {
     display: flex;
     flex-direction: column;
@@ -139,16 +135,6 @@ h1 {
     width: 100%;
 }
 
-/*.tableHeader.is-sorted_asc .companyNameArrow[data-sort-direction="asc"],*/
-/*.tableHeader.is-sorted_desc .companyNameArrow[data-sort-direction="desc"] {*/
-/*    display: inline;*/
-/*}*/
-/**/
-/*.tableHeader.is-sorted_asc .companyNameArrow[data-sort-direction="desc"],*/
-/*.tableHeader.is-sorted_desc .companyNameArrow[data-sort-direction="asc"] {*/
-/*    display: none;*/
-/*}*/
-
 .table_bordered {
     border-collapse: separate;
     border-top: var(--borderWidthThin, 1px) solid var(--g-color-border-base-1, var(--colorBorder));
@@ -252,8 +238,6 @@ thead {
 .notification-container {
     width: 100%;
     display: flex;
-    /*justify-content: center;*/
-    /*align-items: start;*/
     flex-direction: column;
 }
 
