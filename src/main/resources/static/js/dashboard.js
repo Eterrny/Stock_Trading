@@ -9,13 +9,6 @@ $(document).ready(function () {
         userCommissionRate = parseFloat(data) % 100;
     });
 
-    function checkTradingHours() {
-        const now = new Date();
-        const utcHour = now.getUTCHours();
-        const mskHour = (utcHour + 3) % 24;
-        return mskHour >= 10 && mskHour < 22;
-    }
-
     window.sortTable = function (fieldName) {
         let tableBody = $('#stocksTableBody');
         let rows = tableBody.find('tr').get();
@@ -151,6 +144,13 @@ $(document).ready(function () {
             $('#quantityInput').attr('max', availableQuantity)
             quantityCell.text(availableQuantity);
         }
+    }
+
+    function checkTradingHours() {
+        const now = new Date();
+        const utcHour = now.getUTCHours();
+        const mskHour = (utcHour + 3) % 24;
+        return mskHour >= 10 && mskHour < 22;
     }
 
     function showError(message) {

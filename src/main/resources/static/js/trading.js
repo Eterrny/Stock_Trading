@@ -150,7 +150,7 @@ $(document).ready(function () {
         const utcHour = now.getUTCHours();
         const mskHour = (utcHour + 3) % 24;
 
-        if (mskHour >= 13 && mskHour < 22) {
+        if (mskHour >= 10 && mskHour < 22) {
             $('#stocksDetails').show();
             $('#closedMessage').hide();
         } else {
