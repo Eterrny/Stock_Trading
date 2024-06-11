@@ -25,12 +25,6 @@ public class UserController {
     public String getCurrentUserTariff(@AuthenticationPrincipal UserDetails userDetails) {
         return userService.findByUsername(userDetails.getUsername()).getTariff();
     }
-
-//
-//    @GetMapping("/login")
-//    public String showLoginPage() {
-//        return "login";
-//    }
 }
 
 

@@ -29,6 +29,7 @@ public class StockController {
 
     @GetMapping("/trading")
     public String showTradingPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        log.info("Request to show trading page for user: {}", userDetails.getUsername());
         List<Stock> stocks = findAllWithNotNullQty();
         User user = userService.findByUsername(userDetails.getUsername());
         model.addAttribute("stocks", stocks);
@@ -39,9 +40,11 @@ public class StockController {
     @PostMapping("/buy-stock")
     @ResponseBody
     public ResponseEntity<?> buyStock(@AuthenticationPrincipal UserDetails userDetails, @RequestParam String company, @RequestParam int quantity) {
+        log.info("Request to buy stock for user: {}, company: {}, quantity: {}", userDetails.getUsername(), company, quantity);
         try {
             Stock stock = stockRepository.findByCompanyName(company);
             stockService.buyProduct(userDetails, stock, quantity);
+            log.info("Stock purchased successfully for user: {}, company: {}, quantity: {}", userDetails.getUsername(), company, quantity);
             return ResponseEntity.ok().body("Stock purchased successfully!");
         } catch (InsufficientBalanceException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

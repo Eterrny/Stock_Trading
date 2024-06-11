@@ -6,15 +6,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.ssu.springproject.stocks_trading.models.User;
 import ru.ssu.springproject.stocks_trading.repositories.UserRepository;
 
-import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class CustomUserDetailsService  implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
@@ -26,6 +24,5 @@ public class CustomUserDetailsService  implements UserDetailsService {
         }
         log.info("User found with username: {}", username);
         return userRepository.findByUsername(username);
-//        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
     }
 }

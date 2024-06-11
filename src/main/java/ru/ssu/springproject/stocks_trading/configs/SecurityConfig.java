@@ -11,6 +11,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import ru.ssu.springproject.stocks_trading.handlers.CustomAuthenticationFailureHandler;
+import ru.ssu.springproject.stocks_trading.handlers.CustomAuthenticationSuccessHandler;
+import ru.ssu.springproject.stocks_trading.handlers.CustomLogoutSuccessHandler;
 import ru.ssu.springproject.stocks_trading.services.CustomUserDetailsService;
 
 
@@ -19,6 +22,9 @@ import ru.ssu.springproject.stocks_trading.services.CustomUserDetailsService;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -30,13 +36,14 @@ public class SecurityConfig {
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/dashboard", true)
+                        .successHandler(customAuthenticationSuccessHandler)
+                        .failureHandler(customAuthenticationFailureHandler)
                         .permitAll()
                 )
                 .logout(logout ->
                         logout
                                 .logoutUrl("/logout")
-                                .logoutSuccessUrl("/login?logout")
+                                .logoutSuccessHandler(customLogoutSuccessHandler)
                                 .invalidateHttpSession(true)
                                 .deleteCookies("JSESSIONID")
                 )
@@ -47,13 +54,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-
-//    @Override
-//    protected void securityFilterChain(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService)
-//                .passwordEncoder(passwordEncoder());
-//    }
-
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
@@ -62,18 +62,6 @@ public class SecurityConfig {
                 .passwordEncoder(passwordEncoder());
         return authenticationManagerBuilder.build();
     }
-
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        UserDetails user =
-//                User.withDefaultPasswordEncoder()
-//                        .username("user")
-//                        .password("password")
-//                        .roles("USER")
-//                        .build();
-//
-//        return new InMemoryUserDetailsManager(user);
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

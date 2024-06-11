@@ -14,8 +14,6 @@ import ru.ssu.springproject.stocks_trading.repositories.StockRepository;
 import ru.ssu.springproject.stocks_trading.repositories.UserRepository;
 import ru.ssu.springproject.stocks_trading.repositories.UserStockRepository;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -26,7 +24,10 @@ public class StockService {
     private final UserStockRepository userStockRepository;
 
     public void buyProduct(UserDetails userDetails, Stock stock, int quantity) {
+        log.info("Request to buy stock: {}, quantity: {} for user: {}", stock.getCompanyName(), quantity, userDetails.getUsername());
+
         if (stock.getAvailableQuantity() < quantity) {
+            log.warn("Not enough stock available to buy: requested {}, available {}", quantity, stock.getAvailableQuantity());
             throw new NotEnoughQuantityException("Not enough stock to buy");
         }
 
@@ -37,12 +38,16 @@ public class StockService {
 
         double commissionRate = getCommissionRate(user.getTariff());
         double totalCost = stock.getBuyPrice() * quantity * (1 + commissionRate);
+        log.info("Total cost calculated: {}, commission rate: {}%", totalCost, commissionRate * 100);
+
         if (user.getBalance() >= totalCost) {
             user.setBalance(user.getBalance() - totalCost);
             userRepository.save(user);
+            log.info("User balance after purchase: {}", user.getBalance());
 
             stock.setAvailableQuantity(stock.getAvailableQuantity() - quantity);
             stockRepository.save(stock);
+            log.info("Stock quantity updated: {}", stock.getAvailableQuantity());
 
             UserStock userStock = userStockRepository.findByUserAndStockName(user, stock.getCompanyName());
             if (userStock == null) {
@@ -51,15 +56,18 @@ public class StockService {
                 userStock.setStockName(stock.getCompanyName());
                 userStock.setQuantity(quantity);
                 userStock.setAveragePrice(stock.getSellPrice());
+                log.info("New user stock created: {}", userStock);
             } else {
                 int newQuantity = userStock.getQuantity() + quantity;
                 double newAveragePrice = (stock.getSellPrice());
                 userStock.setQuantity(newQuantity);
                 userStock.setAveragePrice(newAveragePrice);
+                log.info("Updated user stock: {}", userStock);
             }
             userStockRepository.save(userStock);
-            log.info("Пользователь {} купил акцию {}, количество: {} стоимость: {}, процент комиссии: {}%", user.getUsername(), stock.getCompanyName(), quantity, totalCost, commissionRate * 100);
+            log.info("User {} bought stock {}, quantity: {}, total cost: {}, commission rate: {}%", user.getUsername(), stock.getCompanyName(), quantity, totalCost, commissionRate * 100);
         } else {
+            log.warn("Insufficient balance for user: {} to complete the purchase. Required: {}, available: {}", user.getUsername(), totalCost, user.getBalance());
             throw new InsufficientBalanceException("Insufficient balance to complete the purchase");
         }
     }

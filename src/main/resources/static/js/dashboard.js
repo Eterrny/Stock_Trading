@@ -94,37 +94,6 @@ $(document).ready(function () {
         $('#overlay').hide();
     });
 
-    // $('#sellForm').submit(function (event) {
-    //     event.preventDefault();
-    //     //const company = $(this).data('company');
-    //     const quantity = $('#quantityInput').val();
-    //     const buyPrice = parseFloat($('#stocksTableBody').find('td:contains(' + $('#stockName').text() + ')').next().text());
-    //     const totalCost = buyPrice * quantity * (1 - tariffs[userTariff]);
-    //     const data = {
-    //         company: $('#stockName').text(),
-    //         quantity: quantity
-    //     };
-    //     $.ajax({
-    //         url: '/dashboard/sell-stock',
-    //         type: 'POST',
-    //         headers: {
-    //             [csrfHeader]: csrfToken
-    //         },
-    //         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-    //         data: $.param(data),
-    //         success: function (response) {
-    //             showSuccessMessage(response);
-    //             userBalance += totalCost;
-    //             $('#userBalance').text(userBalance.toFixed(1));
-    //             $('#sellModal').hide();
-    //             $('#overlay').hide();
-    //         },
-    //         error: function (xhr, status, error) {
-    //             showError(xhr.responseText);
-    //         }
-    //     });
-    // });
-
     $('#sellForm').submit(function (event) {
         event.preventDefault();
         const quantity = $('#quantityInput').val();
@@ -148,7 +117,7 @@ $(document).ready(function () {
                 const sellPrice = parseFloat($('#stocksTableBody').find('td:contains(' + stockName + ')').next().text());
                 const totalCost = sellPrice * quantity * (1 - tariffs[userTariff]);
                 userBalance += totalCost;
-                $('#userBalance').text(userBalance.toFixed(2));
+                $('#userBalance').text(userBalance.toFixed(1));
                 updateTable(stockName, quantity);
                 $('#sellModal').hide();
                 $('#overlay').hide();

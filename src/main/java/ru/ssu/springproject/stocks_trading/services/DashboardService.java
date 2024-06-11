@@ -23,6 +23,8 @@ public class DashboardService {
 
     @Transactional
     public void sellProduct(User user, UserStock userStock, int quantity) {
+        log.info("Starting the sellProduct method for user: {}, stock: {}, quantity: {}", user.getUsername(), userStock.getStockName(), quantity);
+
         if (userStock.getQuantity() < quantity) {
             throw new NotEnoughQuantityException("Not enough stocks to sell");
         }
@@ -31,6 +33,7 @@ public class DashboardService {
         }
         double commissionRate = getCommissionRate(user.getTariff());
         double totalCost = userStock.getAveragePrice() * quantity * (1 - commissionRate);
+        log.info("Total cost for selling stock: {}, quantity: {}, at price: {}, with commission: {} is {}", userStock.getStockName(), quantity, userStock.getAveragePrice(), commissionRate, totalCost);
 
         user.setBalance(user.getBalance() + totalCost);
         userRepository.save(user);
@@ -38,8 +41,10 @@ public class DashboardService {
         userStock.setQuantity(userStock.getQuantity() - quantity);
         if (userStock.getQuantity() == 0) {
             userStockRepository.deleteById(userStock.getId());
+            log.info("UserStock for user: {} with stock: {} has been deleted as quantity is 0", user.getUsername(), userStock.getStockName());
         } else {
             userStockRepository.save(userStock);
+            log.info("Updated UserStock for user: {} with stock: {}, new quantity: {}", user.getUsername(), userStock.getStockName(), userStock.getQuantity());
         }
 
         Stock stock = stockRepository.findByCompanyName(userStock.getStockName());
@@ -49,11 +54,13 @@ public class DashboardService {
             stock.setCompanyName(userStock.getStockName());
             stock.setSellPrice(userStock.getAveragePrice());
             stock.setBuyPrice(userStock.getAveragePrice() * 1.03);
+            log.info("New stock created for company: {}, quantity: {}, sell price: {}, buy price: {}", userStock.getStockName(), quantity, userStock.getAveragePrice(), userStock.getAveragePrice() * 1.03);
         } else {
             stock.setAvailableQuantity(stock.getAvailableQuantity() + quantity);
+            log.info("Updated stock for company: {}, new available quantity: {}", stock.getCompanyName(), stock.getAvailableQuantity());
         }
         stockRepository.save(stock);
-        log.info("Пользователь {} продал акцию {}, количество: {} сумма: {}, процент комиссии: {}%", user.getUsername(), userStock.getStockName(), quantity, totalCost, commissionRate * 100);
+        log.info("User {} sold stock {}, quantity: {}, total amount: {}, commission rate: {}%", user.getUsername(), userStock.getStockName(), quantity, totalCost, commissionRate * 100);
     }
 
     private double getCommissionRate(String tariff) {

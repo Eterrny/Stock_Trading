@@ -116,7 +116,7 @@ $(document).ready(function () {
                 success: function (response) {
                     showSuccessMessage(response);
                     userBalance -= totalCost;
-                    $('#userBalance').text(userBalance.toFixed(2));
+                    $('#userBalance').text(userBalance.toFixed(1));
                     updateTable($('#companyName').text(), quantity)
                     $('#buyModal').hide();
                     $('#overlay').hide();
