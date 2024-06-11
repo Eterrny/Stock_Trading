@@ -2,33 +2,12 @@ $(document).ready(function () {
     const csrfToken = $('meta[name="_csrf"]').attr('content');
     const csrfHeader = $('meta[name="_csrf_header"]').attr('content');
 
-    const tariffs = {
-        'premium': 0.005,
-        'pro': 0.01,
-        'novice': 0.03
-    };
-
     let userCommissionRate;
     let userBalance = parseFloat($('#userBalance').text());
 
     $.get("/current-user-tariff", function (data) {
         userCommissionRate = parseFloat(data) % 100;
-        // console.log("User commission rate: " + userCommissionRate);
     });
-
-    function checkTradingHours() {
-        const now = new Date();
-        const utcHour = now.getUTCHours();
-        const mskHour = (utcHour + 3) % 24;
-
-        if (mskHour >= 10 && mskHour < 22) {
-            $('#stocksDetails').show();
-            $('#closedMessage').hide();
-        } else {
-            $('#stocksDetails').hide();
-            $('#closedMessage').show();
-        }
-    }
 
     checkTradingHours();
     setInterval(checkTradingHours, 60000);
@@ -140,7 +119,7 @@ $(document).ready(function () {
                     $('#overlay').hide();
                 },
                 error: function (xhr, status, error) {
-                    showError(xhr.responseText);
+                    showError(xhr.responseText + "<br>" + error);
                 }
             });
         } else {
@@ -163,6 +142,20 @@ $(document).ready(function () {
             row.remove();
         } else {
             quantityCell.text(availableQuantity);
+        }
+    }
+
+    function checkTradingHours() {
+        const now = new Date();
+        const utcHour = now.getUTCHours();
+        const mskHour = (utcHour + 3) % 24;
+
+        if (mskHour >= 13 && mskHour < 22) {
+            $('#stocksDetails').show();
+            $('#closedMessage').hide();
+        } else {
+            $('#stocksDetails').hide();
+            $('#closedMessage').show();
         }
     }
 

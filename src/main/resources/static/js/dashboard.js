@@ -2,18 +2,11 @@ $(document).ready(function () {
     const csrfToken = $('meta[name="_csrf"]').attr('content');
     const csrfHeader = $('meta[name="_csrf_header"]').attr('content');
 
-    const tariffs = {
-        'premium': 0.005,
-        'pro': 0.01,
-        'novice': 0.03
-    };
-
     let userCommissionRate;
     let userBalance = parseFloat($('#userBalance').text());
 
     $.get("/current-user-tariff", function (data) {
         userCommissionRate = parseFloat(data) % 100;
-        // console.log("User commission rate: " + userCommissionRate);
     });
 
     function checkTradingHours() {
@@ -71,7 +64,7 @@ $(document).ready(function () {
 
     $('.sell-btn').click(function () {
         if (!checkTradingHours()) {
-            showMessage("The trading platform is closed.<br>Working Hours: 10:00 - 22:00 (UTC+3)")
+            showError("The trading platform is closed.<br>Working Hours: 10:00 - 22:00 (UTC+3)")
             return;
         }
         const company = $(this).data('company');
@@ -135,7 +128,7 @@ $(document).ready(function () {
                 $('#overlay').hide();
             },
             error: function (xhr, status, error) {
-                showError(xhr.responseText);
+                showError(xhr.responseText + "<br>" + error);
             }
         });
     });
